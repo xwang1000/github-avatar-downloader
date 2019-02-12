@@ -1,11 +1,14 @@
+// Modules
+
 var request = require('request');
 var fs = require('fs')
 var secrets = require('./secrets.js')
 
-// Get input from command line
-var [arg1, arg2] = process.argv.slice(2)
+// Functions
 
-function downloadImageByURL(url, filePath) {
+// Get input from command line
+
+const downloadImageByURL = (url, filePath) => {
   request.get(url)
     .on('error', function (err) {
       throw err
@@ -16,25 +19,25 @@ function downloadImageByURL(url, filePath) {
     .pipe(fs.createWriteStream(filePath));       
 }
 
-function downloadImageByContributor(contributor) {
+const downloadImageByContributor = (contributor) => {
   const path = '.avatars/' + contributor.login
   downloadImageByURL(contributor['avatar_url'], `./avatars/${contributor['login']}.jpg`)
 }
 
 // Takes a contributor object and shows its properties
-function showContributorAvatarUrl(contributor) {
+const showContributorAvatarUrl = (contributor) => {
   console.log(`${contributor.login}: ${contributor.avatar_url}`)
 }
 
 // Takes an array of contributor objects, show each
-function showContributors(contributors) {
+const showContributors = (contributors) => {
   contributors.forEach(showContributorAvatarUrl)
   // contributors.forEach(downloadImageByContributor)
 }
 
 // request url
-function getRepoContributors(repoOwner, repoName, cb) {
-  var options = {
+const getRepoContributors = (repoOwner, repoName, cb) => {
+  const options = {
     url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
     headers: {
       'User-Agent': 'request',
@@ -47,9 +50,24 @@ function getRepoContributors(repoOwner, repoName, cb) {
   });
 }
 
-getRepoContributors(arg1, arg2, function(err, result) {
+const getArguments = () => {
+  const [repoOwner, repoName] = process.argv.slice(2)
+  if (repoOwner === undefined || repoName === undefined) {
+    console.error('error: not enough arguments')
+    console.error('usage: node download_avatars.js [repo-owner] [repo-name]')
+    process.exit(1)
+  }
+  return { repoOwner, repoName }
+}
+
+// Main program
+
+const { repoOwner, repoName } = getArguments()
+
+getRepoContributors(repoOwner, repoName, function(err, result) {
   if (err) {
     throw err
   }
   showContributors(result)
 });
+

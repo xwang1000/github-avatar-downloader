@@ -32,7 +32,7 @@ const showContributorAvatarUrl = (contributor) => {
 // Takes an array of contributor objects, show each
 const showContributors = (contributors) => {
   contributors.forEach(showContributorAvatarUrl)
-  // contributors.forEach(downloadImageByContributor)
+  contributors.forEach(downloadImageByContributor)
 }
 
 // request url

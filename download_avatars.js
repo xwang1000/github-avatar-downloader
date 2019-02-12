@@ -2,6 +2,9 @@ var request = require('request');
 var fs = require('fs')
 var secrets = require('./secrets.js')
 
+// Get input from command line
+var [arg1, arg2] = process.argv.slice(2)
+
 function downloadImageByURL(url, filePath) {
   request.get(url)
     .on('error', function (err) {
@@ -26,7 +29,7 @@ function showContributorAvatarUrl(contributor) {
 // Takes an array of contributor objects, show each
 function showContributors(contributors) {
   contributors.forEach(showContributorAvatarUrl)
-  contributors.forEach(downloadImageByContributor)
+  // contributors.forEach(downloadImageByContributor)
 }
 
 // request url
@@ -44,7 +47,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
   });
 }
 
-getRepoContributors("jquery", "jquery", function(err, result) {
+getRepoContributors(arg1, arg2, function(err, result) {
   if (err) {
     throw err
   }
